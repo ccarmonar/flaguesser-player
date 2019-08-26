@@ -9,14 +9,17 @@ script:
 - pip install -r requirements.txt
 - pytest test/test.py
 after_success:
-- echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-- docker build . -t ${DOCKER_USERNAME}/gamesplayer
-- docker push ${DOCKER_USERNAME}/gamesplayer
-- 'curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json"
-  -H "Travis-API-Version: 3" -H "Authorization: token ${TRAVIS_API_TOKEN}" -d ''{"request":{"branch":"master"}}''
-  https://api.travis-ci.org/repo/${TRAVIS_USERNAME}%2F${TRAVIS_REPO}/requests
-
-'
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker build . -t ${DOCKER_USERNAME}/gamesplayer
+  - docker push ${DOCKER_USERNAME}/gamesplayer
+  - >
+    curl -s -X POST
+    -H "Content-Type: application/json"
+    -H "Accept: application/json"
+    -H "Travis-API-Version: 3"
+    -H "Authorization: token ${TRAVIS_API_TOKEN}"
+    -d '{"request":{"branch":"master"}}'
+    https://api.travis-ci.org/repo/${TRAVIS_USERNAME}%2F${TRAVIS_REPO}/requests
 env:
   global:
-    secure: JzdOfU5s/94Ysl8MqeJDmOf8nhnrvvySEUZuxiPOB+uyNdLqPZOi/jnfHDMt5mdrSA3TPpMkMXOoBCuh8Me2pT2PsL9MhdfpMMwOxDQVr+o5qj9sjmvuw25JnHPRDwe3e1wkQJWc4RS/Kj9a/DYffiZ9lLIgfg609EWV44dk1PhynozMFpzgX2z6PZ7IXYGngPi79yOSK/+K616VnpEIeRieWr3KBRVM4U+XLNiXkBV/FEcE8UrbtaMKHp6s9Fk69xTTDVJb7wwNhfhHY4TOw4b31wNBNyD0QjAYtvo2KgMZ+BHaqd7zs70IOEdW6NRd0Q5D7cc52YBUKYbH+8woS37BQj/f3LaHHN+8O1Xmb+a+D2+ldK+rgHjwZyY4Uaq0FKwyGI2FHSkpadINPjkQ5nhNZ3I59NnEHbVDd+RGQWjKbew/zKHrZrVrqpSchEvn2lhafBBvPU7HUtCWLXaMZXWHBDPUnThRKckfZ3wB23HPgUV1ABa9FInd/FkPG9k5y40x/rdZ0wXXb09VcO+51a8jbhvTrBK3rxuC3ke+Mwjsw8IWv8nhtgGdGNu3aOd5tTj6cIQ5QYvX7XUvYX/0YhhF727u5XzeRmnmM3fxpcSbLT3bTsTv1/OpKyRzFC/3DOYoWiEeLkgWhqAjf8WW9qf759Xx1ybO4PqtlhnvoKM=
+    secure: RhV3py5jbsnv8lJKsKn7A/+PABHBOBtc+75V+2bQXbcdVamiAZYxXwt5jKe9eXLNXNR6qRBWaFJk+xEqM3t/TlXX2dpbmP/FequgdShLC2NBKdDrfURE96/ryHyZwQPOFgpqGDzpV2/osL4sY7ybamJC7d8v8rMnNOpUno0L9HsiV5QNK2CgA918aAUiu4sT8YPpRkIL1AOXgoE7WM0lcFbjPHAN5/9tKUDP9diEIwy2YfXevoQ+ZjQ/punzWAxUC0vZpQEhShlv9pLuuis6zARM3EdlqaiU5rCLMR8ft+yPw606V7yo2t+Rvzya8G+RBmO2tJ7Zc3ArH+JXTOawy7tyXnA6OGaudAnaw8PGTYZKxtdWqZZvFwmGwwAlyvs46jMYwnKvId4dAyvYVG3mfHvjcjSId6QrWn7Pgo/BYVmfhNoevl6bUFnNP6Y76hlnRRqv5j3rw8nHmeFTbF6ZSPvgpl6cC6dIwEhFsDGWQfNrz40ZGyBs6KRvkq4Rw4LfJwfBSjVbM0QrIie6OEGDoAdQJX4wgS8UkZSlDul1hw9vtXf0qaE8+NJeQlOEV8b5VCdShBI56y4hMnLAT14y1Zes56i47u/V9904vkso6BeAxS54JKCVSEdOP9BQssuh3BGGLHTSTgOhhtmYvnBPWxR5Lz2o0ujLGH8b5vvYzCQ=
