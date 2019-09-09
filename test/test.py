@@ -40,5 +40,13 @@ def test_get_player(session):
     assert service.get_player(TEST_USERNAME, TEST_PASSWORD) is not None
     assert service.get_player(TEST_USERNAME, "") is None
 
-    assert service.get_player_by_username(TEST_USERNAME) is not None
+    player = service.get_player_by_username(TEST_USERNAME)
+    assert player is not None
     assert service.get_player_by_username("") is None
+
+    assert player["elo"] == 1000
+
+    service.update_elo(TEST_USERNAME, 10)
+    player = service.get_player_by_username(TEST_USERNAME)
+
+    assert player["elo"] == 1010

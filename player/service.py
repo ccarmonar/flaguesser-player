@@ -59,3 +59,10 @@ class PlayerService:
             return None
 
         return PlayerSchema().dump(player).data
+
+    @rpc
+    def update_elo(self, username, delta_elo):
+        player_filter = self.rep.db.query(Player).filter(Player.username == username)
+        player = player_filter.first()
+        player_filter.update({"elo": player.elo + delta_elo})
+        self.rep.db.commit()

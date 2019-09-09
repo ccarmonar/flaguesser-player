@@ -66,7 +66,7 @@ class Player(DeclarativeBase):
         )
     )
     country = Column(String(50))
-    elo = Column(Integer)
+    elo = Column(Integer, default=1000)
     jwt = Column(LargeBinary(128), nullable=True)
 
     @validates("username")
