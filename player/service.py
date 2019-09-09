@@ -55,7 +55,7 @@ class PlayerService:
         player = self.rep.db.query(Player).filter(Player.username == usernm).first()
         if not player:
             return None
-        if player.password != passw:
+        if not player.verify_password(passw):
             return None
 
         return PlayerSchema().dump(player).data

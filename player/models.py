@@ -3,6 +3,9 @@ from sqlalchemy import (
 )
 
 import os
+import hashlib
+import binascii
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import validates
 from sqlalchemy.ext.declarative import declarative_base
@@ -30,12 +33,31 @@ def get_url():
 DeclarativeBase = declarative_base()
 
 
+def hash_password(password):
+    salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+    pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'),
+                                  salt, 100000)
+    pwdhash = binascii.hexlify(pwdhash)
+    return (salt + pwdhash).decode('ascii')
+
+
+def verify_password(stored_password, provided_password):
+    salt = stored_password[:64]
+    stored_password = stored_password[64:]
+    pwdhash = hashlib.pbkdf2_hmac('sha512',
+                                  provided_password.encode('utf-8'),
+                                  salt.encode('ascii'),
+                                  100000)
+    pwdhash = binascii.hexlify(pwdhash).decode('ascii')
+    return pwdhash == stored_password
+
+
 class Player(DeclarativeBase):
     __tablename__ = "Player"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), unique=True)
-    password = Column(
+    _password = Column(
         EncryptedType(
             String,
             "secret",
@@ -51,6 +73,17 @@ class Player(DeclarativeBase):
     def validate_username(self, key, username):
         assert len(username) > 4
         return username
+
+    @property
+    def password(self):
+        return self._password
+
+    @password.setter
+    def password(self, password):
+        self._password = hash_password(password)
+
+    def verify_password(self, password):
+        return verify_password(self._password, password)
 
 
 class PlayerRepository:
