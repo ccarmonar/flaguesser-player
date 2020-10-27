@@ -3,5 +3,5 @@ nameko==2.12.0
 marshmallow==2.19.5
 nameko_sqlalchemy
 psycopg2-binary
-cryptography==2.7
+cryptography==3.2
 sqlalchemy-utils==0.34
